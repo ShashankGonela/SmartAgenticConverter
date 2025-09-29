@@ -1,0 +1,16 @@
+{
+  "name": "smart-converter-agent",
+  "version": "1.0.0",
+  "description": "AI-powered converter Chrome extension for units, currency, and date/time",
+  "scripts": {
+    "build": "node build-config.js",
+    "dev": "node build-config.js && echo Extension ready for development",
+    "clean": "node -e \"const fs=require('fs'); if(fs.existsSync('config.js')) fs.unlinkSync('config.js'); console.log('Cleaned config.js')\""
+  },
+  "keywords": ["chrome-extension", "converter", "ai", "gemini", "units", "currency", "datetime"],
+  "author": "Smart Converter Agent Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

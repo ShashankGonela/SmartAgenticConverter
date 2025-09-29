@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Converter Agent</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <span class="icon">🔄</span>
+                <h1>Smart Converter Agent</h1>
+            </div>
+            <div class="subtitle">AI-powered conversions</div>
+        </header>
+
+        <main class="main-content">
+            <div class="input-section">
+                <div class="input-group">
+                    <textarea 
+                        id="userQuery" 
+                        placeholder="Ask me to convert units, currency, or calculate dates...&#10;&#10;Example: 'What day is 50 days from now and convert 5 miles to km?'"
+                        rows="3"
+                    ></textarea>
+                    <button id="submitBtn" class="submit-btn">
+                        <span class="btn-text">Convert</span>
+                        <span class="btn-loader">⏳</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Query Examples Section -->
+            <div class="examples-section" id="examplesSection">
+                <div class="examples-header" id="examplesHeader">
+                    <span>📚 Query Examples & Formats</span>
+                    <span class="toggle-icon" id="toggleIcon">▼</span>
+                </div>
+                <div class="examples-content collapsed" id="examplesContent">
+                    <div class="example-category">
+                        <h4>🔢 Unit Conversions</h4>
+                        <div class="example-items">
+                            <span class="example-item" data-query="Convert 5 miles to km">Convert 5 miles to km</span>
+                            <span class="example-item" data-query="10 pounds to kg">10 pounds to kg</span>
+                            <span class="example-item" data-query="100°F to °C">100°F to °C</span>
+                            <span class="example-item" data-query="2 gallons in liters">2 gallons in liters</span>
+                            <span class="example-item" data-query="How many inches in 1 meter">How many inches in 1 meter</span>
+                        </div>
+                    </div>
+                    
+                    <div class="example-category">
+                        <h4>💰 Currency Conversions</h4>
+                        <div class="example-items">
+                            <span class="example-item" data-query="Convert 100 USD to EUR">Convert 100 USD to EUR</span>
+                            <span class="example-item" data-query="50 dollars to pounds">50 dollars to pounds</span>
+                            <span class="example-item" data-query="How much is 1000 JPY in USD">How much is 1000 JPY in USD</span>
+                            <span class="example-item" data-query="200 EUR in GBP">200 EUR in GBP</span>
+                            <span class="example-item" data-query="500 CAD to AUD">500 CAD to AUD</span>
+                        </div>
+                    </div>
+                    
+                    <div class="example-category">
+                        <h4>📅 Date & Time</h4>
+                        <div class="example-items">
+                            <span class="example-item" data-query="What day is 50 days from now?">What day is 50 days from now?</span>
+                            <span class="example-item" data-query="How many days until Christmas?">How many days until Christmas?</span>
+                            <span class="example-item" data-query="What time is it in Tokyo?">What time is it in Tokyo?</span>
+                            <span class="example-item" data-query="Convert 3 PM PST to EST">Convert 3 PM PST to EST</span>
+                            <span class="example-item" data-query="What day was 30 days ago?">What day was 30 days ago?</span>
+                            <span class="example-item" data-query="What day is yesterday?">What day is yesterday?</span>
+                        </div>
+                    </div>
+                    
+                    <div class="format-tips">
+                        <h4>💡 Tips for Best Results</h4>
+                        <ul>
+                            <li><strong>Be specific:</strong> Use exact numbers and units (e.g., "5 miles" not "some miles")</li>
+                            <li><strong>Use standard formats:</strong> "X unit to unit" or "Convert X unit to unit"</li>
+                            <li><strong>Currency codes:</strong> USD, EUR, GBP work better than "dollars", "euros"</li>
+                            <li><strong>Time zones:</strong> Use common abbreviations (PST, EST) or city names (Tokyo, London)</li>
+                            <li><strong>Dates:</strong> "X days from now", "X days ago", or holiday names (Christmas, Halloween)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="output-section">
+                <div class="output-header">
+                    <h3>Result</h3>
+                    <button id="clearBtn" class="clear-btn">Clear</button>
+                </div>
+                <div id="outputArea" class="output-area">
+                    <div class="placeholder">
+                        <span class="placeholder-icon">💡</span>
+                        <p>Enter your conversion query above to get started</p>
+                        <div class="examples">
+                            <small>Try: "Convert 100 USD to EUR", "What's 25°C in Fahrenheit?", or "How many days until Christmas?"</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="logs-section">
+                <div class="logs-header">
+                    <h4>Agent Process</h4>
+                    <button id="toggleLogs" class="toggle-btn">Show Details</button>
+                </div>
+                <div id="logsContainer" class="logs-container collapsed">
+                    <div id="logsArea" class="logs-area">
+                        <!-- Logs will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="status" id="status">Ready</div>
+        </footer>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="lib/dayjs.js"></script>
+    <script src="lib/convert-units.js"></script>
+    <script src="unitConverter.js"></script>
+    <script src="currencyConverter.js"></script>
+    <script src="datetimeHelper.js"></script>
+    <script src="agent.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>
