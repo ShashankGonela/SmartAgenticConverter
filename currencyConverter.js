@@ -201,12 +201,12 @@ class CurrencyConverter {
         const currencyQuery = this.extractCurrencyPortion(query);
         
         const patterns = [
-            // "100 USD to EUR", "convert 50 dollars to euros"
-            /(?:convert\s+)?(\d+(?:\.\d+)?)\s*(USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)\s+(?:to|in|into)\s+(USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)/i,
-            // "how much is 100 USD in EUR"
-            /how\s+much\s+is\s+(\d+(?:\.\d+)?)\s*(USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)\s+in\s+(USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)/i,
-            // "100 USD in EUR"
-            /(\d+(?:\.\d+)?)\s*(USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)\s+in\s+(USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)/i
+            // "100 USD to EUR", "convert 50 dollars to euros", "10,000 JPY to INR"
+            /(?:convert\s+)?(\d+(?:[,\.]\d+)*)\s*(USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)\s+(?:to|in|into)\s+(USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)/i,
+            // "how much is 100 USD in EUR", "how much is 10,000 JPY in INR"
+            /how\s+much\s+is\s+(\d+(?:[,\.]\d+)*)\s*(USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)\s+in\s+(USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)/i,
+            // "100 USD in EUR", "10,000 JPY in INR"
+            /(\d+(?:[,\.]\d+)*)\s*(USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)\s+in\s+(USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)/i
         ];
 
         // Try patterns on both extracted portion and original query
@@ -216,8 +216,10 @@ class CurrencyConverter {
             for (const pattern of patterns) {
                 const match = queryToTest.match(pattern);
                 if (match) {
+                    // Remove commas from number and parse
+                    const cleanAmount = match[1].replace(/,/g, '');
                     return {
-                        amount: parseFloat(match[1]),
+                        amount: parseFloat(cleanAmount),
                         fromCurrency: this.normalizeCurrency(match[2]),
                         toCurrency: this.normalizeCurrency(match[3])
                     };
@@ -233,12 +235,12 @@ class CurrencyConverter {
      */
     extractCurrencyPortion(query) {
         const currencyPatterns = [
-            // "convert X USD to EUR"
-            /convert\s+\d+(?:\.\d+)?\s*(?:USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)\s+(?:to|in|into)\s+(?:USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)/i,
-            // "how much is X USD in EUR"
-            /how\s+much\s+is\s+\d+(?:\.\d+)?\s*(?:USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)\s+in\s+(?:USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)/i,
-            // "X USD in EUR"
-            /\d+(?:\.\d+)?\s*(?:USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)\s+(?:to|in)\s+(?:USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)/i
+            // "convert X USD to EUR" (handles comma-separated numbers)
+            /convert\s+\d+(?:[,\.]\d+)*\s*(?:USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)\s+(?:to|in|into)\s+(?:USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)/i,
+            // "how much is X USD in EUR" (handles comma-separated numbers)
+            /how\s+much\s+is\s+\d+(?:[,\.]\d+)*\s*(?:USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)\s+in\s+(?:USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)/i,
+            // "X USD in EUR" or "X USD to EUR" (handles comma-separated numbers)
+            /\d+(?:[,\.]\d+)*\s*(?:USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)\s+(?:to|in)\s+(?:USD|EUR|GBP|JPY|CAD|AUD|CHF|CNY|INR|KRW|dollars?|euros?|pounds?|yen|yuan|won|rupees?)/i
         ];
 
         for (const pattern of currencyPatterns) {

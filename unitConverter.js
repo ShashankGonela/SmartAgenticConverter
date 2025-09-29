@@ -95,12 +95,12 @@ class UnitConverter {
         const unitQuery = this.extractUnitPortion(query);
         
         const patterns = [
-            // "5 miles to km", "convert 10 pounds to kg"
-            /(?:convert\s+)?(\d+(?:\.\d+)?)\s*([a-zA-Z°]+)\s+(?:to|in|into)\s+([a-zA-Z°]+)/i,
-            // "5 miles in km", "10 pounds as kg"
-            /(\d+(?:\.\d+)?)\s*([a-zA-Z°]+)\s+(?:in|as)\s+([a-zA-Z°]+)/i,
-            // "how many km in 5 miles"
-            /how\s+many\s+([a-zA-Z°]+)\s+(?:in|are)\s+(\d+(?:\.\d+)?)\s*([a-zA-Z°]+)/i
+            // "5 miles to km", "convert 10 pounds to kg", "1,000 grams to kg"
+            /(?:convert\s+)?(\d+(?:[,\.]\d+)*)\s*([a-zA-Z°]+)\s+(?:to|in|into)\s+([a-zA-Z°]+)/i,
+            // "5 miles in km", "10 pounds as kg", "1,000 grams as kg"
+            /(\d+(?:[,\.]\d+)*)\s*([a-zA-Z°]+)\s+(?:in|as)\s+([a-zA-Z°]+)/i,
+            // "how many km in 5 miles", "how many kg in 1,000 grams"
+            /how\s+many\s+([a-zA-Z°]+)\s+(?:in|are)\s+(\d+(?:[,\.]\d+)*)\s*([a-zA-Z°]+)/i
         ];
 
         // Try patterns on both extracted portion and original query
@@ -112,15 +112,17 @@ class UnitConverter {
                 if (match) {
                     if (pattern.source.includes('how\\s+many')) {
                         // For "how many X in Y Z" format
+                        const cleanValue = match[2].replace(/,/g, '');
                         return {
-                            value: parseFloat(match[2]),
+                            value: parseFloat(cleanValue),
                             fromUnit: match[3],
                             toUnit: match[1]
                         };
                     } else {
                         // For standard "X Y to Z" format
+                        const cleanValue = match[1].replace(/,/g, '');
                         return {
-                            value: parseFloat(match[1]),
+                            value: parseFloat(cleanValue),
                             fromUnit: match[2],
                             toUnit: match[3]
                         };
@@ -137,18 +139,18 @@ class UnitConverter {
      */
     extractUnitPortion(query) {
         const unitPatterns = [
-            // "convert X miles to km"
-            /convert\s+\d+(?:\.\d+)?\s*[a-zA-Z°]+\s+(?:to|in|into)\s+[a-zA-Z°]+/i,
-            // "X miles to km"
-            /\d+(?:\.\d+)?\s*[a-zA-Z°]+\s+(?:to|in|into)\s+[a-zA-Z°]+/i,
-            // "X miles in km"
-            /\d+(?:\.\d+)?\s*[a-zA-Z°]+\s+(?:in|as)\s+[a-zA-Z°]+/i,
-            // "how many km in X miles"
-            /how\s+many\s+[a-zA-Z°]+\s+(?:in|are)\s+\d+(?:\.\d+)?\s*[a-zA-Z°]+/i,
-            // Temperature patterns "X°F to °C"
-            /\d+(?:\.\d+)?\s*°[CFKcfk]\s+(?:to|in)\s+°?[CFKcfk]/i,
-            // "what's X°F in °C"
-            /what'?s\s+\d+(?:\.\d+)?\s*°[CFKcfk]\s+in\s+°?[CFKcfk]/i
+            // "convert X miles to km" (handles comma-separated numbers)
+            /convert\s+\d+(?:[,\.]\d+)*\s*[a-zA-Z°]+\s+(?:to|in|into)\s+[a-zA-Z°]+/i,
+            // "X miles to km" (handles comma-separated numbers)
+            /\d+(?:[,\.]\d+)*\s*[a-zA-Z°]+\s+(?:to|in|into)\s+[a-zA-Z°]+/i,
+            // "X miles in km" (handles comma-separated numbers)
+            /\d+(?:[,\.]\d+)*\s*[a-zA-Z°]+\s+(?:in|as)\s+[a-zA-Z°]+/i,
+            // "how many km in X miles" (handles comma-separated numbers)
+            /how\s+many\s+[a-zA-Z°]+\s+(?:in|are)\s+\d+(?:[,\.]\d+)*\s*[a-zA-Z°]+/i,
+            // Temperature patterns "X°F to °C" (handles comma-separated numbers)
+            /\d+(?:[,\.]\d+)*\s*°[CFKcfk]\s+(?:to|in)\s+°?[CFKcfk]/i,
+            // "what's X°F in °C" (handles comma-separated numbers)
+            /what'?s\s+\d+(?:[,\.]\d+)*\s*°[CFKcfk]\s+in\s+°?[CFKcfk]/i
         ];
 
         for (const pattern of unitPatterns) {
